@@ -48,6 +48,16 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
+     * Get the collaborators managed by the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function collaborators()
+    {
+        return $this->hasMany(Collaborator::class, 'managed_by');
+    }
+
+    /**
      * Get the identifier that will be stored in the JWT token.
      */
     public function getJWTIdentifier()
