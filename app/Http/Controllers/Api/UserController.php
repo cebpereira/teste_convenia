@@ -3,72 +3,35 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Services\UserService;
+
 
 class UserController extends Controller
 {
-    public function register(Request $request)
+    protected $userService;
+
+    public function __construct(UserService $userService)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        try {
-            $token = JWTAuth::fromUser($user);
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'Could not create token'], 500);
-        }
-
-        return response()->json([
-            'token' => $token,
-            'user' => $user,
-        ], 201);
+        $this->userService = $userService;
     }
 
-    public function getUser()
+
+    public function store(CreateUserRequest $request)
     {
-        try {
-            $user = Auth::user();
-
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
-            }
-
-            return response()->json($user);
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'Failed to fetch user profile'], 500);
-        }
+        return $this->userService->create($request->all());
     }
 
-    public function updateUser(Request $request)
+
+    public function show()
     {
-        try {
-            $authUser = Auth::user();
+        return $this->userService->get();
+    }
 
-            $user = User::find($authUser->id);
 
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
-            }
-
-            $user->update($request->only('name', 'email'));
-
-            return response()->json($user);
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'Failed to update user'], 500);
-        }
+    public function update(UpdateUserRequest $request)
+    {
+        return $this->userService->update($request->all());
     }
 }
