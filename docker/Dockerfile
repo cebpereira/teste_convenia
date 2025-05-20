@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -12,7 +12,7 @@ RUN apt-get update -y && apt-get install -y \
     libmariadb-dev \
     unzip zip \
     zlib1g-dev \
-    libpng-dev \ 
+    libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \

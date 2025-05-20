@@ -24,6 +24,7 @@ data:
 
 key:
 	docker exec convenia-site bash -c "php artisan key:generate"
+	docker exec convenia-site bash -c "php artisan jwt:secret"
 
 link:
 	docker exec convenia-site bash -c "php artisan storage:link"
