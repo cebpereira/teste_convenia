@@ -17,7 +17,12 @@ class CollaboratorFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'cpf' => fake()->unique()->numerify('###.###.###-##'),
+            'city' => fake()->city(),
+            'state' => fake('en_US')->state(),
+            'managed_by' => fake()->numberBetween(1, 11),
         ];
     }
 }
