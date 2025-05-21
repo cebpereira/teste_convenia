@@ -24,6 +24,7 @@ class UserController extends Controller
      *     summary="Create a new user",
      *     description="Create a new user",
      *     operationId="createUser",
+     *     security={{ "apiAuth": {} }},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/CreateUserRequest")
@@ -47,6 +48,7 @@ class UserController extends Controller
      *     summary="Get the authenticated user",
      *     description="Get the authenticated user",
      *     operationId="getUser",
+     *     security={{ "apiAuth": {} }},
      *     @OA\Response(
      *         response=200,
      *         description="User retrieved successfully",
@@ -66,6 +68,7 @@ class UserController extends Controller
      *     summary="Update the authenticated user",
      *     description="Update the authenticated user",
      *     operationId="updateUser",
+     *     security={{ "apiAuth": {} }},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/UpdateUserRequest")

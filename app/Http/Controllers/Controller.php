@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use OpenApi\Annotations as OA;
 
 /**
@@ -12,7 +13,16 @@ use OpenApi\Annotations as OA;
  *         name="Carlos Elandro",
  *         email="c.elandro.bp@gmail.com"
  *     )
- * )
+ * ),
+ *     @OA\SecurityScheme(
+ *         type="http",
+ *         description="Login with email and password to get the authentication token",
+ *         name="Token based Based",
+ *         in="header",
+ *         scheme="bearer",
+ *         bearerFormat="JWT",
+ *         securityScheme="apiAuth",
+ *     )
  */
 abstract class Controller
 {

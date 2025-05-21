@@ -24,6 +24,7 @@ class CollaboratorController extends Controller
      *     path="/api/collaborators",
      *     tags={"Collaborators"},
      *     summary="Create a new collaborator",
+     *     security={{ "apiAuth": {} }},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -52,6 +53,7 @@ class CollaboratorController extends Controller
      * @OA\Post(
      *     path="/api/collaborators/import",
      *     tags={"Collaborators"},
+     *     security={{ "apiAuth": {} }},
      *     summary="Import collaborators from a CSV file",
      *     @OA\Response(
      *         response=200,
@@ -69,6 +71,7 @@ class CollaboratorController extends Controller
      *     path="/api/collaborators",
      *     tags={"Collaborators"},
      *     summary="Get all collaborators of the authenticated user",
+     *     security={{ "apiAuth": {} }},
      *     @OA\Response(
      *         response=200,
      *         description="List of collaborators"
@@ -85,6 +88,7 @@ class CollaboratorController extends Controller
      *     path="/api/collaborators/{collaborator}",
      *     tags={"Collaborators"},
      *     summary="Update a collaborator",
+     *     security={{ "apiAuth": {} }},
      *     @OA\Parameter(
      *         name="collaborator",
      *         in="path",
@@ -118,6 +122,7 @@ class CollaboratorController extends Controller
      *     path="/api/collaborators/{collaborator}",
      *     tags={"Collaborators"},
      *     summary="Delete a collaborator",
+     *     security={{ "apiAuth": {} }},
      *     @OA\Parameter(
      *         name="collaborator",
      *         in="path",

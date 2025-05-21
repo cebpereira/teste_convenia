@@ -59,6 +59,7 @@ class AuthController extends Controller
      *     tags={"Auth"},
      *     summary="Logout",
      *     description="Logout and invalidate JWT token",
+     *     security={{ "apiAuth": {} }},
      *     @OA\Response(
      *         response=200,
      *         description="Successful logout",
