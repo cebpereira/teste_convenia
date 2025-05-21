@@ -5,6 +5,7 @@ setup:
 	@make key
 	@make data
 	@make link
+	@make coverage
 
 build:
 	docker compose build --no-cache --force-rm
@@ -28,3 +29,6 @@ key:
 
 link:
 	docker exec convenia-site bash -c "php artisan storage:link"
+
+coverage:
+	docker exec convenia-site bash -c "php artisan test --coverage"

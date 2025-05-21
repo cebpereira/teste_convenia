@@ -24,6 +24,8 @@ RUN apt-get install libpq-dev libzip-dev libfreetype6-dev libjpeg62-turbo-dev li
     && docker-php-ext-install -j$(nproc) iconv \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
+    && pecl install pcov \
+    && docker-php-ext-enable pcov \
     && a2enmod rewrite
 
 RUN chmod -R 777 /var/www/html \
