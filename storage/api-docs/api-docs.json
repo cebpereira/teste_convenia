@@ -1,0 +1,563 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Documentation",
+        "description": "Routes and models for the API",
+        "contact": {
+            "name": "Carlos Elandro",
+            "email": "c.elandro.bp@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "description": "Login and get JWT token",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        },
+                                        "expires_in": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "description": "Logout and invalidate JWT token",
+                "operationId": "df9bdc6c7a6d9f20b983526b2ec0f698",
+                "responses": {
+                    "200": {
+                        "description": "Successful logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/collaborators": {
+            "get": {
+                "tags": [
+                    "Collaborators"
+                ],
+                "summary": "Get all collaborators of the authenticated user",
+                "operationId": "713291fad70233607accbe9284f8499a",
+                "responses": {
+                    "200": {
+                        "description": "List of collaborators"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Collaborators"
+                ],
+                "summary": "Create a new collaborator",
+                "operationId": "9e2f18e31b19a66c9673b9b06c3d00ed",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "cpf": {
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Collaborator created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/collaborators/import": {
+            "post": {
+                "tags": [
+                    "Collaborators"
+                ],
+                "summary": "Import collaborators from a CSV file",
+                "operationId": "94e85e5e00057d4592475046f4c26b3d",
+                "responses": {
+                    "200": {
+                        "description": "Send content of the CSV file to import job successfully"
+                    }
+                }
+            }
+        },
+        "/api/collaborators/{collaborator}": {
+            "put": {
+                "tags": [
+                    "Collaborators"
+                ],
+                "summary": "Update a collaborator",
+                "operationId": "eb258ee3066dba812a958921a2e8aa09",
+                "parameters": [
+                    {
+                        "name": "collaborator",
+                        "in": "path",
+                        "description": "ID of the collaborator to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "cpf": {
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Collaborator updated successfully"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Collaborators"
+                ],
+                "summary": "Delete a collaborator",
+                "operationId": "198196399511056beff7e7590d1b3f8f",
+                "parameters": [
+                    {
+                        "name": "collaborator",
+                        "in": "path",
+                        "description": "ID of the collaborator to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Collaborator deleted successfully"
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create a new user",
+                "description": "Create a new user",
+                "operationId": "createUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/me": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get the authenticated user",
+                "description": "Get the authenticated user",
+                "operationId": "getUser",
+                "responses": {
+                    "200": {
+                        "description": "User retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update the authenticated user",
+                "description": "Update the authenticated user",
+                "operationId": "updateUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CreateCollaboratorRequest": {
+                "title": "CreateCollaboratorRequest",
+                "description": "Create collaborator request",
+                "required": [
+                    "name",
+                    "email",
+                    "cpf",
+                    "city",
+                    "state"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "mail@example.com"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "123.456.789-00"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Sao Paulo"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "SP"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCollaboratorRequest": {
+                "title": "UpdateCollaboratorRequest",
+                "description": "Update collaborator request",
+                "required": [
+                    "name",
+                    "email",
+                    "cpf",
+                    "city",
+                    "state"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "mail@example.com"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "123.456.789-00"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Sao Paulo"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "SP"
+                    }
+                },
+                "type": "object"
+            },
+            "CreateUserRequest": {
+                "title": "CreateUserRequest",
+                "description": "Create user request",
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "password_confirmation"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "mail@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "password"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "example": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "title": "UpdateUserRequest",
+                "description": "Update user request",
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "password_confirmation"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "mail@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "password"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "example": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "Collaborator": {
+                "title": "Collaborator",
+                "description": "Collaborator model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "mail@example.com"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "123.456.789-00"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Sao Paulo"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "SP"
+                    },
+                    "managed_by": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T00:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "mail@example.com"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T00:00:00Z"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T00:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Collaborators",
+            "description": "Collaborators"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        }
+    ]
+}

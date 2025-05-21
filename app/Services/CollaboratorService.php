@@ -7,6 +7,7 @@ use App\Models\Collaborator;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class CollaboratorService
@@ -40,7 +41,7 @@ class CollaboratorService
             return response()->json([
                 'collaborator' => $collaborator,
             ], 201);
-        } catch (Exception $ex){
+        } catch (Exception $ex) {
             return response()->json(['error' => $ex->getMessage()], 500);
         }
     }
@@ -68,16 +69,23 @@ class CollaboratorService
         }
     }
 
-    public function import()
+    public function import($data)
     {
         try {
             $user = Auth::user();
 
             throw_if(!$user, 'User not authenticated', 401);
 
-            // TODO: implement import logic
+            throw_if(!$data, 'File not found', 400);
 
-            dispatch(new ImportCollaboratorsJob($user->id));
+            $timestamp = now()->format('Ymd_His');
+            $filename = 'import_' . $timestamp . '.' . $data->getClientOriginalExtension();
+
+            $filePath = $data->storeAs('imports', $filename, 'local');
+
+            throw_if (!Storage::disk('local')->exists($filePath), 'Failed to store the import file', 500);
+
+            dispatch(new ImportCollaboratorsJob($user->id, $filePath));
 
             return response()->json('Import occurring in the background, you will be notified when the process is complete', 201);
         } catch (Exception $ex) {
@@ -169,7 +177,7 @@ class CollaboratorService
     {
         $updateData = Arr::only((array)$data, ['name', 'email', 'cpf', 'city', 'state']);
 
-        return array_filter($updateData, function($value) {
+        return array_filter($updateData, function ($value) {
             return $value !== null;
         });
     }

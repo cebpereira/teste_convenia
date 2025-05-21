@@ -3,7 +3,21 @@
 namespace App\Http\Requests\Collaborator;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="CreateCollaboratorRequest",
+ *     title="CreateCollaboratorRequest",
+ *     description="Create collaborator request",
+ *     required={"name", "email", "cpf", "city", "state"},
+ *     @OA\Property(property="name", type="string", example="John Doe"),
+ *     @OA\Property(property="email", type="string", format="email", example="mail@example.com"),
+ *     @OA\Property(property="cpf", type="string", example="123.456.789-00"),
+ *     @OA\Property(property="city", type="string", example="Sao Paulo"),
+ *     @OA\Property(property="state", type="string", example="SP"),
+ * )
+ */
 class CreateCollaboratorRequest extends FormRequest
 {
     /**
@@ -38,9 +52,9 @@ class CreateCollaboratorRequest extends FormRequest
     public function messages()
     {
         return [
-            '*.required' => 'O campo :attribute é obrigatório.',
-            '*.unique' => 'O :attribute já está em uso.',
-            '*.email' => 'O campo :attribute deve ser um endereço de e-mail válido.',
+            '*.required' => 'The field :attribute is required.',
+            '*.unique' => 'The :attribute is already in use.',
+            '*.email' => 'The field :attribute must be a valid email.',
         ];
     }
 }

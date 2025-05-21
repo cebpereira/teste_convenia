@@ -3,7 +3,20 @@
 namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="CreateUserRequest",
+ *     title="CreateUserRequest",
+ *     description="Create user request",
+ *     required={"name", "email", "password", "password_confirmation"},
+ *     @OA\Property(property="name", type="string", example="John Doe"),
+ *     @OA\Property(property="email", type="string", format="email", example="mail@example.com"),
+ *     @OA\Property(property="password", type="string", example="password"),
+ *     @OA\Property(property="password_confirmation", type="string", example="password"),
+ * )
+ */
 class CreateUserRequest extends FormRequest
 {
     /**
@@ -37,11 +50,11 @@ class CreateUserRequest extends FormRequest
     public function messages()
     {
         return [
-            '*.required' => 'O campo :attribute é obrigatório.',
-            '*.unique' => 'O :attribute já está em uso.',
-            '*.email' => 'O campo :attribute deve ser um endereço de e-mail válido.',
-            '*.min' => 'O campo :attribute deve ter pelo menos :min caracteres.',
-            '*.same' => 'O campo :attribute deve ser igual ao campo :other.',
+            '*.required' => 'The field :attribute is required.',
+            '*.unique' => 'O :attribute is already in use.',
+            '*.email' => 'The field :attribute must be a valid email.',
+            '*.min' => 'The field :attribute must have :min characters.',
+            '*.same' => 'The field :attribute must be the same as :other.',
         ];
     }
 }
