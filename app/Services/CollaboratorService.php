@@ -63,7 +63,7 @@ class CollaboratorService
 
             throw_if(!$collaborators, 'No collaborators found', 404);
 
-            return response()->json($collaborators, 201);
+            return response()->json($collaborators, 200);
         } catch (Exception $ex) {
             return response()->json(['error' => $ex->getMessage()], 500);
         }
@@ -87,7 +87,7 @@ class CollaboratorService
 
             dispatch(new ImportCollaboratorsJob($user->id, $filePath));
 
-            return response()->json('Import occurring in the background, you will be notified when the process is complete', 201);
+            return response()->json('Import occurring in the background, you will be notified when the process is complete', 200);
         } catch (Exception $ex) {
             return response()->json(['error' => $ex->getMessage()], 500);
         }
