@@ -3,7 +3,23 @@
 namespace App\Http\Requests\Collaborator;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="ImportCollaboratorRequest",
+ *     title="ImportCollaboratorRequest",
+ *     description="Import collaborator request",
+ *     required={"file"},
+ *     @OA\Property(
+ *         property="file",
+ *         type="string",
+ *         format="binary",
+ *         description="CSV file with collaborator data",
+ *         @OA\Examples(example="csv", value="collaborators.csv", summary="CSV file")
+ *     ),
+ * )
+ */
 class ImportCollaboratorRequest extends FormRequest
 {
     /**
@@ -22,21 +38,7 @@ class ImportCollaboratorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|mimes:csv,txt',
-        ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            '*.required' => 'The field :attribute is required.',
-            '*.file' => 'The field :attribute must be a file.',
-            '*.mimes' => 'The field :attribute must be a CSV or TXT file.',
+            'file' => 'required|file|mimes:csv,txt|max:10240',
         ];
     }
 }

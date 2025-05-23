@@ -10,10 +10,9 @@ use OpenApi\Annotations as OA;
  *     schema="UpdateUserRequest",
  *     title="UpdateUserRequest",
  *     description="Update user request",
- *     required={"name", "email", "password", "password_confirmation"},
- *     @OA\Property(property="name", type="string", example="John Doe"),
- *     @OA\Property(property="email", type="string", format="email", example="mail@example.com"),
- *     @OA\Property(property="password", type="string", example="password"),
+ *     @OA\Property(property="name", type="string", maxLength=255, example="John Doe"),
+ *     @OA\Property(property="email", type="string", maxLength=255, format="email", example="mail@example.com"),
+ *     @OA\Property(property="password", type="string", minLength=6, example="password"),
  *     @OA\Property(property="password_confirmation", type="string", example="password"),
  * )
  */
@@ -37,27 +36,9 @@ class UpdateUserRequest extends FormRequest
         $user = $this->user();
 
         return [
-            'name' => 'sometimes|required',
-            'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
-            'password' => 'sometimes|required|min:6',
-            'password_confirmation' => 'sometimes|required_if:password|same:password',
-        ];
-    }
-
-    /**
-     * Get the custom messages for the validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages()
-    {
-        return [
-            '*.required' => 'The field :attribute is required.',
-            '*.required_if' => 'The field :attribute is required when :other is :value.',
-            '*.unique' => 'The :attribute is already in use.',
-            '*.email' => 'The field :attribute must be a valid email.',
-            '*.min' => 'The field :attribute must have :min characters.',
-            '*.same' => 'The field :attribute must be the same as :other.',
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'sometimes|min:6|confirmed',
         ];
     }
 }
