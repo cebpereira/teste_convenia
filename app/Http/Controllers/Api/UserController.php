@@ -38,7 +38,16 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
-        return $this->userService->create($request->all());
+        try {
+            $response = $this->userService->create($request->validated());
+
+            return response()->json([
+                'token' => $response['token'],
+                'user' => $response['user']
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()],  $e->getCode());
+        }
     }
 
     /**
@@ -58,7 +67,13 @@ class UserController extends Controller
      */
     public function show()
     {
-        return $this->userService->get();
+        try {
+            $user = $this->userService->get();
+
+            return response()->json($user);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()],  $e->getCode());
+        }
     }
 
     /**
@@ -82,6 +97,23 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request)
     {
-        return $this->userService->update($request->all());
+        try {
+            $response = $this->userService->update($request->validated());
+
+            if ($response['token_invalidated']) {
+                return response()->json([
+                    'message' => 'User updated successfully. Token invalidated.',
+                    'user' => $response['user'],
+                    'token_invalidated' => $response['token_invalidated']
+                ], 200);
+            }
+
+            return response()->json([
+                'message' => 'User updated successfully.',
+                'user' => $response['user']
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 }

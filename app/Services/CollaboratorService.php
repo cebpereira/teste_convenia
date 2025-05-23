@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Tymon\JWTAuth\Exceptions\JWTException;
 
 class CollaboratorService
 {
@@ -16,152 +15,121 @@ class CollaboratorService
      * Create a new collaborator for the authenticated user.
      *
      * @param  mixed  $data  The data required to create a collaborator.
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Models\Collaborator  The created collaborator instance.
      *
-     * @throws \Exception If the user is not found or collaborator creation fails.
+     * @throws \Exception If the user is not authenticated or the collaborator creation fails.
      */
     public function create($data)
     {
-        try {
-            $user = Auth::user();
+        $user = Auth::user();
 
-            throw_if(!$user, 'User not authenticated', 401);
+        throw_if(!$user, 'User not authenticated', 401);
 
-            $collaborator = Collaborator::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'cpf' => $data['cpf'],
-                'city' => $data['city'],
-                'state' => $data['state'],
-                'managed_by' => $user->id,
-            ]);
+        $collaborator = Collaborator::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'cpf' => $data['cpf'],
+            'city' => $data['city'],
+            'state' => $data['state'],
+            'manager_id' => $user->id,
+        ]);
 
-            throw_if(!$collaborator, 'Failed to create collaborator', 500);
+        throw_if(!$collaborator, 'Failed to create collaborator', 500);
 
-            return response()->json([
-                'collaborator' => $collaborator,
-            ], 201);
-        } catch (Exception $ex) {
-            return response()->json(['error' => $ex->getMessage()], 500);
-        }
+        return $collaborator;
     }
 
     /**
-     * Get all collaborators of the authenticated user.
+     * Retrieve all collaborators managed by the authenticated user.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
+     *
      * @throws \Exception If the user is not found or no collaborators are found.
      */
     public function list()
     {
-        try {
-            $user = Auth::user();
+        $user = Auth::user();
 
-            throw_if(!$user, 'User not authenticated', 401);
+        throw_if(!$user, 'User not authenticated', 401);
 
-            $collaborators = Collaborator::where('managed_by', $user->id)->get();
+        $collaborators = Collaborator::where('manager_id', $user->id)->get();
 
-            throw_if(!$collaborators, 'No collaborators found', 404);
+        throw_if($collaborators->isEmpty(), 'No collaborators found', 404);
 
-            return response()->json($collaborators, 200);
-        } catch (Exception $ex) {
-            return response()->json(['error' => $ex->getMessage()], 500);
-        }
+        return $collaborators;
     }
 
+    /**
+     * Imports collaborators from a file for the authenticated user.
+     *
+     * @param mixed $data The file data to be imported.
+     * @return string The path of the stored import file.
+     *
+     * @throws \Exception If the user is not authenticated, the file is not found,
+     *                    or if there is a failure in storing the import file.
+     */
     public function import($data)
     {
-        try {
-            $user = Auth::user();
+        $user = Auth::user();
 
-            throw_if(!$user, 'User not authenticated', 401);
+        throw_if(!$user, 'User not authenticated', 401);
 
-            throw_if(!$data, 'File not found', 400);
+        throw_if(!$data, 'File not found', 404);
 
-            $timestamp = now()->format('Ymd_His');
-            $filename = 'import_' . $timestamp . '.' . $data->getClientOriginalExtension();
+        $timestamp = now()->format('Ymd_His');
+        $filename = 'import_' . $timestamp . '.' . $data->getClientOriginalExtension();
+        $filePath = $data->storeAs('imports', $filename, 'local');
 
-            $filePath = $data->storeAs('imports', $filename, 'local');
+        throw_if(!Storage::disk('local')->exists($filePath), 'Failed to store the import file', 500);
 
-            throw_if (!Storage::disk('local')->exists($filePath), 'Failed to store the import file', 500);
+        dispatch(new ImportCollaboratorsJob($user->id, $filePath));
 
-            dispatch(new ImportCollaboratorsJob($user->id, $filePath));
-
-            return response()->json('Import occurring in the background, you will be notified when the process is complete', 200);
-        } catch (Exception $ex) {
-            return response()->json(['error' => $ex->getMessage()], 500);
-        }
+        return $filePath;
     }
 
     /**
-     * Update a collaborator.
+     * Update a collaborator of the authenticated user.
      *
      * @param  mixed  $data  The data required to update a collaborator.
-     * @param  mixed  $collaborator  The collaborator to be updated.
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Collaborator  $collaborator  The collaborator to update.
+     * @return \App\Models\Collaborator
      *
-     * @throws \Exception If the user is not found, collaborator is not found, or collaborator update fails.
+     * @throws \Exception If the user is not found, the collaborator is not managed by user, or no data to update.
      */
-    public function update($data, $collaborator)
+    public function update($data, Collaborator $collaborator)
     {
-        try {
-            $user = Auth::user();
+        $user = Auth::user();
 
-            throw_if(!$user, 'User not authenticated', 401);
+        throw_if(!$user, 'User not authenticated', 401);
 
-            $collaborator = Collaborator::where('id', $collaborator)
-                ->where('managed_by', $user->id)
-                ->first();
+        throw_if($collaborator->manager_id !== $user->id, 'Collaborator not managed by user', 403);
 
-            throw_if(!$collaborator, 'Collaborator not found or not managed by user', 404);
+        $updateData = $this->prepareUpdateData($data);
 
-            $updateData = $this->prepareUpdateData($data);
+        throw_if(empty($updateData), 'No data to update', 400);
 
-            throw_if(!$updateData, 'No data to update', 400);
+        $collaborator->update($updateData);
 
-            $collaborator->update($updateData);
-            $collaborator->save();
-
-            return response()->json([
-                'collaborator' => $collaborator,
-                'message' => 'Collaborator updated successfully'
-            ], 200);
-        } catch (Exception $ex) {
-            return response()->json(['error' => $ex->getMessage()], 500);
-        } catch (JWTException $exjwt) {
-            return response()->json(['error' => $exjwt->getMessage()], 500);
-        }
+        return $collaborator;
     }
 
     /**
-     * Delete a collaborator.
+     * Delete a collaborator managed by the authenticated user.
      *
-     * @param  Collaborator  $collaborator
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Collaborator  $collaborator  The collaborator to delete.
+     * @return bool
      *
-     * @throws \Exception If the user is not found or collaborator deletion fails.
+     * @throws \Exception If the user is not found or the collaborator is not managed by user.
      */
-    public function delete($collaborator)
+    public function delete(Collaborator $collaborator)
     {
-        try {
-            $user = Auth::user();
+        $user = Auth::user();
 
-            throw_if(!$user, 'User not found', 404);
+        throw_if(!$user, 'User not found', 404);
 
-            $collaborator = Collaborator::where('id', $collaborator)
-                ->where('managed_by', $user->id)
-                ->first();
+        throw_if($collaborator->manager_id !== $user->id, 'Collaborator not managed by user', 403);
 
-            throw_if(!$collaborator, 'Collaborator not found or not managed by user', 404);
-
-            $collaborator->delete();
-
-            return response()->json([
-                'message' => 'Collaborator deleted successfully'
-            ], 200);
-        } catch (Exception $ex) {
-            return response()->json(['error' => $ex->getMessage()], 500);
-        }
+        return $collaborator->delete();
     }
 
     /**

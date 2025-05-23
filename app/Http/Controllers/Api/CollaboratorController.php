@@ -27,13 +27,7 @@ class CollaboratorController extends Controller
      *     security={{ "apiAuth": {} }},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="email", type="string"),
-     *             @OA\Property(property="cpf", type="string"),
-     *             @OA\Property(property="city", type="string"),
-     *             @OA\Property(property="state", type="string"),
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/CreateCollaboratorRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -46,7 +40,13 @@ class CollaboratorController extends Controller
      */
     public function store(CreateCollaboratorRequest $request)
     {
-        return $this->collaboratorService->create($request->all());
+        try {
+            $collaborator = $this->collaboratorService->create($request->validated());
+
+            return response()->json(['collaborator' => $collaborator], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
@@ -55,15 +55,27 @@ class CollaboratorController extends Controller
      *     tags={"Collaborators"},
      *     security={{ "apiAuth": {} }},
      *     summary="Import collaborators from a CSV file",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ImportCollaboratorRequest")
+     *     ),
      *     @OA\Response(
-     *         response=200,
+     *         response=202,
      *         description="Send content of the CSV file to import job successfully"
      *     )
      * )
      */
     public function import(ImportCollaboratorRequest $request)
     {
-        return $this->collaboratorService->import($request->file('file'));
+        try {
+            $this->collaboratorService->import($request->file('file'));
+
+            return response()->json([
+                'message' => 'Import occurring in the background, you will be notified when complete'
+            ], 202);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
@@ -80,7 +92,13 @@ class CollaboratorController extends Controller
      */
     public function list()
     {
-        return $this->collaboratorService->list();
+        try {
+            $collaborators = $this->collaboratorService->list();
+
+            return response()->json([$collaborators], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
@@ -98,13 +116,7 @@ class CollaboratorController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="email", type="string"),
-     *             @OA\Property(property="cpf", type="string"),
-     *             @OA\Property(property="city", type="string"),
-     *             @OA\Property(property="state", type="string"),
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateCollaboratorRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -114,7 +126,16 @@ class CollaboratorController extends Controller
      */
     public function update(UpdateCollaboratorRequest $request, Collaborator $collaborator)
     {
-        return $this->collaboratorService->update($request->all(), $collaborator->id);
+        try {
+            $updated = $this->collaboratorService->update($request->validated(), $collaborator);
+
+            return response()->json([
+                'collaborator' => $updated,
+                'message' => 'Collaborator updated successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
@@ -138,6 +159,14 @@ class CollaboratorController extends Controller
      */
     public function destroy(Collaborator $collaborator)
     {
-        return $this->collaboratorService->delete($collaborator->id);
+        try {
+            $this->collaboratorService->delete($collaborator);
+
+            return response()->json([
+                'message' => 'Collaborator deleted successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 }
