@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('cpf')->unique();
             $table->string('city');
             $table->string('state');
-            $table->foreignIdFor(User::class, 'managed_by');
+            $table->foreignIdFor(User::class, 'manager_id');
             $table->timestamps();
         });
     }

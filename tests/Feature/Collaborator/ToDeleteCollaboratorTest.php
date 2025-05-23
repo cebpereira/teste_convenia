@@ -9,7 +9,7 @@ class ToDeleteCollaboratorTest extends CollaboratorTestCase
     public function test_delete_collaborator_success(): void
     {
         $collaborator = Collaborator::factory()->create([
-            'managed_by' => $this->user->id,
+            'manager_id' => $this->user->id,
         ]);
 
         $response = $this->deleteJson("/api/collaborators/{$collaborator->id}");

@@ -22,7 +22,7 @@ class CollaboratorFactory extends Factory
             'cpf' => fake()->unique()->numerify('###.###.###-##'),
             'city' => fake()->city(),
             'state' => fake('en_US')->state(),
-            'managed_by' => fake()->numberBetween(1, 11),
+            'manager_id' => fake()->numberBetween(1, 11),
         ];
     }
 }

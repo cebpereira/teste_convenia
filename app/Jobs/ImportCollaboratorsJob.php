@@ -83,7 +83,7 @@ class ImportCollaboratorsJob implements ShouldQueue
                     'cpf' => $record['cpf'],
                     'city' => $record['city'],
                     'state' => $record['state'],
-                    'managed_by' => $user->id,
+                    'manager_id' => $user->id,
                 ]);
 
                 $imported++;

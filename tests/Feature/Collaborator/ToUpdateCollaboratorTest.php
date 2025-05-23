@@ -9,7 +9,7 @@ class ToUpdateCollaboratorTest extends CollaboratorTestCase
     public function test_update_collaborator_success(): void
     {
         $collaborator = Collaborator::factory()->create([
-            'managed_by' => $this->user->id,
+            'manager_id' => $this->user->id,
             'name' => 'Old Name',
         ]);
 
@@ -49,7 +49,7 @@ class ToUpdateCollaboratorTest extends CollaboratorTestCase
 
     public function test_update_collaborator_with_no_data(): void
     {
-        $collaborator = Collaborator::factory()->create(['managed_by' => $this->user->id]);
+        $collaborator = Collaborator::factory()->create(['manager_id' => $this->user->id]);
 
         $response = $this->putJson("/api/collaborators/{$collaborator->id}", []);
 

@@ -68,7 +68,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function collaborators()
     {
-        return $this->hasMany(Collaborator::class, 'managed_by');
+        return $this->hasMany(Collaborator::class, 'manager_id');
     }
 
     /**

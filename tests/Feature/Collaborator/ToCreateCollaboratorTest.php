@@ -21,7 +21,7 @@ class ToCreateCollaboratorTest extends CollaboratorTestCase
 
         $this->assertDatabaseHas('collaborators', [
             'email' => 'carlos@example.com',
-            'managed_by' => $this->user->id,
+            'manager_id' => $this->user->id,
         ]);
     }
 

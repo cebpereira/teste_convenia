@@ -9,7 +9,7 @@ class ToListCollaboratorTest extends CollaboratorTestCase
     public function test_list_collaborators_success(): void
     {
         Collaborator::factory()->count(2)->create([
-            'managed_by' => $this->user->id,
+            'manager_id' => $this->user->id,
         ]);
 
         $response = $this->getJson('/api/collaborators');
