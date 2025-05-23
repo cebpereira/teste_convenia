@@ -123,24 +123,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "cpf": {
-                                        "type": "string"
-                                    },
-                                    "city": {
-                                        "type": "string"
-                                    },
-                                    "state": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/CreateCollaboratorRequest"
                             }
                         }
                     }
@@ -176,8 +159,18 @@
                 ],
                 "summary": "Import collaborators from a CSV file",
                 "operationId": "94e85e5e00057d4592475046f4c26b3d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ImportCollaboratorRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    "200": {
+                    "202": {
                         "description": "Send content of the CSV file to import job successfully"
                     }
                 },
@@ -211,24 +204,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "cpf": {
-                                        "type": "string"
-                                    },
-                                    "city": {
-                                        "type": "string"
-                                    },
-                                    "state": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/UpdateCollaboratorRequest"
                             }
                         }
                     }
@@ -388,11 +364,13 @@
                 "properties": {
                     "name": {
                         "type": "string",
+                        "maxLength": 255,
                         "example": "John Doe"
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
+                        "maxLength": 255,
                         "example": "mail@example.com"
                     },
                     "cpf": {
@@ -401,11 +379,28 @@
                     },
                     "city": {
                         "type": "string",
+                        "maxLength": 100,
                         "example": "Sao Paulo"
                     },
                     "state": {
                         "type": "string",
-                        "example": "SP"
+                        "maxLength": 100,
+                        "example": "Sao Paulo"
+                    }
+                },
+                "type": "object"
+            },
+            "ImportCollaboratorRequest": {
+                "title": "ImportCollaboratorRequest",
+                "description": "Import collaborator request",
+                "required": [
+                    "file"
+                ],
+                "properties": {
+                    "file": {
+                        "description": "CSV file with collaborator data",
+                        "type": "string",
+                        "format": "binary"
                     }
                 },
                 "type": "object"
@@ -413,21 +408,16 @@
             "UpdateCollaboratorRequest": {
                 "title": "UpdateCollaboratorRequest",
                 "description": "Update collaborator request",
-                "required": [
-                    "name",
-                    "email",
-                    "cpf",
-                    "city",
-                    "state"
-                ],
                 "properties": {
                     "name": {
                         "type": "string",
+                        "maxLength": 255,
                         "example": "John Doe"
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
+                        "maxLength": 255,
                         "example": "mail@example.com"
                     },
                     "cpf": {
@@ -436,11 +426,13 @@
                     },
                     "city": {
                         "type": "string",
+                        "maxLength": 100,
                         "example": "Sao Paulo"
                     },
                     "state": {
                         "type": "string",
-                        "example": "SP"
+                        "maxLength": 100,
+                        "example": "Sao Paulo"
                     }
                 },
                 "type": "object"
@@ -457,15 +449,18 @@
                 "properties": {
                     "name": {
                         "type": "string",
+                        "maxLength": 255,
                         "example": "John Doe"
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
+                        "maxLength": 255,
                         "example": "mail@example.com"
                     },
                     "password": {
                         "type": "string",
+                        "minLength": 6,
                         "example": "password"
                     },
                     "password_confirmation": {
@@ -478,24 +473,21 @@
             "UpdateUserRequest": {
                 "title": "UpdateUserRequest",
                 "description": "Update user request",
-                "required": [
-                    "name",
-                    "email",
-                    "password",
-                    "password_confirmation"
-                ],
                 "properties": {
                     "name": {
                         "type": "string",
+                        "maxLength": 255,
                         "example": "John Doe"
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
+                        "maxLength": 255,
                         "example": "mail@example.com"
                     },
                     "password": {
                         "type": "string",
+                        "minLength": 6,
                         "example": "password"
                     },
                     "password_confirmation": {
@@ -535,7 +527,7 @@
                         "type": "string",
                         "example": "SP"
                     },
-                    "managed_by": {
+                    "manager_id": {
                         "type": "integer",
                         "format": "int64",
                         "example": 1
